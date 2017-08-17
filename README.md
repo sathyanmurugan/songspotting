@@ -57,7 +57,10 @@ python app.py
 
 
 ### Things to remember 
-If you install a new library, remember to add it to the requirements file. For example:
+
+1. Every push to master will deploy that version to the Heroku server. Deploys happen automatically: be sure that this branch  is always in a deployable state and any tests have passed before you push.
+
+2. If you install a new library, remember to add it to the requirements file. For example:
 ```
 pip install gunicorn
 pip freeze > requirements.txt
