@@ -22,6 +22,7 @@ pip install -r requirements.txt
 ```
 
 5. Establish Local Settings
+
 To set up our application with environment variables, we’re going to use autoenv. This program allows us to set commands that will run every time we cd into our directory. In order to use it, we will need to install it globally. First, exit out of your virtual environment in the terminal, install autoenv, then and add a .env file:
 
 ```
