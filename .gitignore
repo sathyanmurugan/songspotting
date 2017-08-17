@@ -3,4 +3,4 @@
 venv/
 ENV/
 
-config/config.py
+config.py
