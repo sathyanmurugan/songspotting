@@ -1,6 +1,7 @@
 # virtualenv
 .venv
 .venv~
+.env
 .venv/
 venv/
 ENV/
