@@ -6,7 +6,7 @@ Mad shouts to Cam Linke and the folks at Real Python for this awesome blog post:
 1. Download this repository
 
 2. Navigate to the root directory of the project
-`cd songspotting`
+```cd songspotting```
 
 3. Create a Virtual Environment and activate it
 ```
@@ -15,7 +15,7 @@ source venv/bin/activate
 ```
 
 4. Install the required libraries
-`pip install -r requirements.txt`
+```pip install -r requirements.txt```
 
 5. Establish Local Settings
 To set up our application with environment variables, we’re going to use autoenv. This program allows us to set commands that will run every time we cd into our directory. In order to use it, we will need to install it globally. First, exit out of your virtual environment in the terminal, install autoenv, then and add a .env file:
@@ -46,7 +46,7 @@ Now, if you move up a directory and then cd back into it, the virtual environmen
 
 ### Running the app
 Run the following command to start the app
-`python app.py`
+```python app.py```
 
 
 ### Things to remember 
