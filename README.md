@@ -12,8 +12,8 @@ cd songspotting
 
 3. Create a Virtual Environment and activate it
 ```
-virtualenv venv
-source venv/bin/activate
+virtualenv env
+source env/bin/activate
 ```
 
 4. Install the required libraries
@@ -33,17 +33,17 @@ touch .env
 
 Next, in your .env file, add the following:
 ```
-source venv/bin/activate
+source env/bin/activate
 export DEBUG=True
 export APP_SECRET_KEY='Insert Flask App Secret Key'
 export SPOTIFY_CLIENT_ID='Insert Spotify Client Id'
 export SPOTIFY_CLIENT_SECRET='Insert Spotify Client Secret'
 ```
 
-Now run the following to update then refresh your .bashrc:
+Now run the following to update then refresh your .profile:
 ```
-echo "source `which activate.sh`" >> ~/.bashrc
-source ~/.bashrc
+echo "source `which activate.sh`" >> ~/.profile
+source ~/.profile
 ```
 
 Now, if you move up a directory and then cd back into it, the virtual environment will automatically be started and the environment variables are declared.
