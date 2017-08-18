@@ -4,9 +4,10 @@ app = flask.Flask(__name__)
 
 
 
+
 @app.route('/')
-def hello():
-    return "Hello World1!"
+def main():
+	return flask.render_template('main.html')
 
 if __name__ == '__main__':
     app.run(debug=os.environ['DEBUG'])
