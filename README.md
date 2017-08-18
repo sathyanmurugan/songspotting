@@ -48,7 +48,7 @@ source ~/.bash_profile
 
 Now, if you move up a directory and then cd back into it, the virtual environment will automatically be started and the environment variables are declared. Close the current terminal and start a new one to confirm that it works in a new session.
 
-####Please Note: If the above set of instructions doesn't work, you may need to use `.bashrc` rather than `.bash_profile`
+Please Note: If the above set of instructions doesn't work, you may need to use `.bashrc` rather than `.bash_profile`
 
 
 ### Running the app
