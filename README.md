@@ -40,15 +40,15 @@ export SPOTIFY_CLIENT_ID='Insert Spotify Client Id'
 export SPOTIFY_CLIENT_SECRET='Insert Spotify Client Secret'
 ```
 
-Now run the following to update then refresh your `.bash_profile`:
+Now run the following to update then refresh your `.bashrc`:
 ```
-echo "source `which activate.sh`" >> ~/.bash_profile
-source ~/.bash_profile
+echo "source `which activate.sh`" >> ~/.bashrc
+source ~/.bashrc
 ```
 
 Now, if you move up a directory and then cd back into it, the virtual environment will automatically be started and the environment variables are declared. Close the current terminal and start a new one to confirm that it works in a new session.
 
-Please Note: If the above set of instructions doesn't work, you may need to use `.bashrc` rather than `.bash_profile`
+Please Note: If the above set of instructions doesn't work, you may need to use `.bash_profile` rather than `.bashrc`
 
 
 ### Running the app
