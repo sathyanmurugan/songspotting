@@ -5,3 +5,7 @@
 .venv/
 venv/
 ENV/
+
+*.pyc
+
+.env~
