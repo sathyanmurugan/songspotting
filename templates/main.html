@@ -1,62 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>SongSpotting</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
+{% block body %}
 
-  <link rel="shortcut icon" href="{{ url_for('static',filename='images/music.ico') }}"/>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
-
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
-
-</head>
-
-
-  <body background="{{ url_for('static',filename='images/bg_img.jpg') }}">
-
-    <div class="site-wrapper">
-
-      <div class="site-wrapper-inner">
-
-        <div class="cover-container">
-
-          <div class="masthead clearfix">
-            <div class="inner">
-              <h1 class="masthead-brand">SongSpotting</h1>
-              <nav>
-                <ul class="nav masthead-nav">
-                  <li class="active"><a href="#">Home</a></li>
-                  <li><a href="#">Features</a></li>
-                  <li><a href="#">Contact</a></li>
-                </ul>
-              </nav>
-            </div>
-          </div>
-
-          <div class="inner cover">
-            <h1 class="cover-heading">Curated Playlists For You. Every Day.</h1>
-            <p class="lead">Some descriptive text</p>
-            <p class="lead">
-              <a href="#" class="btn btn-lg btn-outline-success">Login with Spotify</a>
-            </p>
-          </div>
-
-<!--
-          <div class="mastfoot">
-            <div class="inner">
-              <p>Follow us on <a href="#">Facebook</a></p>
-            </div>
-          </div>
--->
-        </div>
-
-      </div>
-
+<div class="inner cover">
+  <h1 class="cover-heading">Curated Playlists For You. Every Day.</h1>
+    <div class="container">
+       <p class="lead"><br>Finding good music is hard and takes up a lot of time and effort, and not all of us have this luxury.<br>Let SongSpotting do all the work. Tell us what music you like and we'll make playlists out of it for you.<br>Every Day.</p>
     </div>
+  <p class="lead">
+    <a href="{{ url_for('login') }}" class="btn btn-lg btn-outline-success">Login with Spotify</a>
+  </p>
+</div>
 
-</body>
-</html>
+{% endblock %}

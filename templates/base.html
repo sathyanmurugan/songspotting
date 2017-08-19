@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SongSpotting</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="shortcut icon" href="{{ url_for('static',filename='images/music.ico') }}"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+
+</head>
+
+
+  <body background="{{ url_for('static',filename='images/bg_img.jpg') }}">
+    <div class="site-wrapper">
+      <div class="site-wrapper-inner">
+        <div class="cover-container">
+
+          <div class="masthead clearfix">
+            <div class="inner">
+              <h1 class="masthead-brand">SongSpotting</h1>
+              <nav>
+                <ul class="nav masthead-nav">
+                 <!-- <li class="active"><a href="#">Home</a></li> -->
+                 <li><a href="#" data-toggle="modal" data-target="#howItWorksModal">How It Works</a></li>
+                 <li><a href="#" data-toggle="modal" data-target="#contactformModal">Contact Us</a></li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+
+      <!-- How It Works Modal -->
+      <div class="modal fade" id = "howItWorksModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content" align="center" style="background-color: #565656">
+        	<div class="modal-body">
+		        By using Spotify's amazing API, we can generate playlists for you, based on your favorite artists, songs, genres, or even your listening habits.<br><br>All you have to do is login with your Spotify account and tell us what kind of playlists we should make for you.<br><br>We will update them for you every day!
+      		</div>
+
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Contactform Modal -->
+      <div class="modal fade" id = "contactformModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content" align="center" style="background-color: #565656">
+            <h3><br>Leave us a message!<br><br></h3>
+            <form name="contactForm" action="#" onsubmit="validateForm()">
+
+	            <div class="form-group">
+	              <div class="col-10">
+	                <input class="form-control" type="text" id="contact-email" placeholder="name@example.com" required>
+	              </div>
+	            </div>
+	            <div class="form-group">
+	              <div class="col-10">
+	                <textarea class="form-control" id="contact-comments" rows="3" placeholder="Comments" required></textarea>
+	              </div>
+	            </div>
+
+	             <button type="submit" class="btn btn-success">Submit</button>
+              <br>
+              <br>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+    <!-- Footer -->
+	<div class="mastfoot">
+	  <div class="inner">
+	    <p>Powered by <a href="https://developer.spotify.com/" target="blank">Spotify</a></p>
+	  </div>
+	</div>
+
+
+	{% block body %}
+	{% endblock %}
+
+	 </div>
+    </div>
+   </div>
+
+</body>
+</html>
