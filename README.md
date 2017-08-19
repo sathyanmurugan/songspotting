@@ -38,6 +38,7 @@ export DEBUG=True
 export APP_SECRET_KEY='Insert Flask App Secret Key'
 export SPOTIFY_CLIENT_ID='Insert Spotify Client Id'
 export SPOTIFY_CLIENT_SECRET='Insert Spotify Client Secret'
+export SPOTIFY_REDIRECT_URI='Insert Spotify Redirect URI'
 ```
 
 Now run the following to update then refresh your `.bashrc`:
