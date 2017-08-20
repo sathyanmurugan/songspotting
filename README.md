@@ -52,6 +52,40 @@ Now, if you move up a directory and then cd back into it, the virtual environmen
 Please Note: If the above set of instructions doesn't work, you may need to use `.bash_profile` rather than `.bashrc`
 
 
+6. Setting up the Database
+
+Install Postgres using brew
+```
+brew install postgres
+```
+
+Next, start the server and run the command that will restart the server each time you boot into the system
+```
+pg_ctl -D /usr/local/var/postgres -l logfile start && brew services start postgresql
+```
+
+Now create the songspotting database and enter into it.
+```
+createdb  songspotting
+psql songspotting
+```
+
+If you are able to access the `songspotting` database, we can now add the `DATABASE URL` to our environment variables
+```
+export DATABASE_URL="postgresql://localhost/songspotting”
+```
+
+We are going to use Alembic, which is part of Flask-Migrate, to manage database migrations. Run the following commands to set up your Database with the tables, as defined in the `models.py` file
+
+```
+python manage.py db migrate
+python manage.py db upgrade
+```
+
+If you check the `songspotting` database, you should now see it populated with tables.
+
+
+
 ### Running the app
 Run the following command to start the app
 ```

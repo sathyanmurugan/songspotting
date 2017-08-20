@@ -1,6 +1,8 @@
 import os
 import spotipy.oauth2 as oauth2
 import time
+import spotipy
+
 
 SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
 SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
@@ -9,8 +11,31 @@ SPOTIFY_SCOPE = """
 playlist-modify-public
 playlist-modify-private
 user-read-email
-user-top-read playlist-read-private
+user-top-read
+playlist-read-private
 """
+
+
+def store_refresh_token(token_data,db,table):
+
+	#Get user_id
+	sp = spotipy.Spotify(auth=token_data['access_token']) 
+	user_id = sp.current_user()['id']
+
+	#Check if user exists in dB
+	user = table.query.filter_by(user_id=user_id).first()
+
+	if user is None:
+		#Add user and refresh_token
+		row = table(user_id,token_data['refresh_token'])
+		db.session.add(row)
+	else:
+		#update refresh_token
+		user.refresh_token = token_data['refresh_token']
+
+	db.session.commit()
+	return
+
 
 class AuthUser(object):
 
@@ -31,17 +56,11 @@ class AuthUser(object):
 	def get_token_data(self,url):
 		code = self.auth.parse_response_code(url)
 		token_data = self.auth.get_access_token(code)
-		self._store_token(token_data) #store token in DB
 		return token_data
 
-	def _store_token(self,token_data):
-
-		#if user already in db, overwrite, else new row
-		return
 
 	def refresh_token(self,token_data):
 		token_data = self.auth.refresh_access_token(token_data['refresh_token'])
-		self._store_token(token_data) #store token in DB
 		return token_data
 
 	
@@ -49,3 +68,7 @@ class AuthUser(object):
 		"""Check if token is still valid"""
 		now = int(time.time())
 		return token_data['expires_at'] - now < 60
+
+
+
+
