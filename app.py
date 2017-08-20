@@ -30,8 +30,7 @@ def main():
 			if auth.is_token_expired(flask.session['token_data']):
 				token_data = auth.refresh_token(flask.session['token_data'])
 				flask.session['token_data'] = token_data
-			else:
-				pass
+
 			return flask.redirect(flask.url_for('factory'))
 
 		except:
@@ -66,14 +65,12 @@ def factory():
 	else:
 		#Try to authenticate user
 		try:
-			#Check if token is expired, and if so, refresh
+			#Check if token is expired, and if so, refresh the access_token
 			if auth.is_token_expired(flask.session['token_data']):
 				token_data = auth.refresh_token(flask.session['token_data'])
 				flask.session['token_data'] = token_data
-			else:
-				pass
 
-			return str(flask.session['token_data'])
+			return flask.render_template('factory.html')
 
 		except:
 			#in case user removed permissions for the app, or if we chanegd the scopes,
@@ -85,6 +82,6 @@ def factory():
 
 @app.route('/test')
 def test():
-	return str(auth._store_token(flask.session['token_data']))
+	return flask.render_template('main.html')
 if __name__ == '__main__':
     app.run()
