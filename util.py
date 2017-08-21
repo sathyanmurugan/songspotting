@@ -1,7 +1,8 @@
 import os
 import spotipy.oauth2 as oauth2
-import time
+import time, datetime
 import spotipy
+from random import shuffle
 
 
 SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
@@ -15,25 +16,64 @@ user-top-read
 playlist-read-private
 """
 
+def get_user_id(token_data):
+	sp = spotipy.Spotify(auth=token_data['access_token']) 
+	return sp.current_user()['id']
+
 
 def store_refresh_token(token_data,db,table):
 
-	#Get user_id
-	sp = spotipy.Spotify(auth=token_data['access_token']) 
-	user_id = sp.current_user()['id']
-
 	#Check if user exists in dB
+	user_id = get_user_id(token_data)
 	user = table.query.filter_by(user_id=user_id).first()
 
 	if user is None:
 		#Add user and refresh_token
-		row = table(user_id,token_data['refresh_token'])
+		now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+		row = table(user_id,token_data['refresh_token'],now)
 		db.session.add(row)
 	else:
 		#update refresh_token
 		user.refresh_token = token_data['refresh_token']
 
 	db.session.commit()
+	return user_id
+
+def create_playlist(token_data,db,table,**kwargs):
+	sp = spotipy.Spotify(auth=token_data['access_token']) 
+	response = sp.user_playlist_create(kwargs['user_id'],kwargs['playlist_name'])
+	playlist_id = response['id']
+	now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+	#Add playlist details to database
+	row = table(kwargs['user_id'],playlist_id,kwargs['playlist_name'],kwargs['playlist_seed'],kwargs['seed_attributes'],now)
+	db.session.add(row)
+	db.session.commit()
+	return playlist_id
+
+def reload_playlist(token_data,table,user_id,playlist_id):
+	sp = spotipy.Spotify(auth=token_data['access_token'])
+
+	playlist = table.query.filter_by(playlist_id=playlist_id).first()
+	if playlist is None:
+		return
+
+	if playlist.playlist_seed == 'favoriteTracks':
+		results = sp.current_user_top_tracks(limit=20, time_range=playlist.seed_attributes)
+		result_ids = [result['id'] for result in results['items']]
+		shuffle(result_ids)
+		recommendations = sp.recommendations(seed_tracks=result_ids[0:5],limit=20)
+		recommendation_ids = [track['id'] for track in recommendations['tracks']]
+	
+
+	elif playlist.playlist_seed == 'favoriteArtists':
+		results = sp.current_user_top_artists(limit=20, time_range=playlist.seed_attributes)
+		result_ids = [result['id'] for result in results['items']]
+		shuffle(result_ids)
+		recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
+		recommendation_ids = [track['id'] for track in recommendations['tracks']]
+
+	sp.user_playlist_replace_tracks(user_id,playlist_id,recommendation_ids)
 	return
 
 

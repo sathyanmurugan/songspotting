@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block body %}
 
+<style type="text/css">
+.table-fixed thead {
+  width: 97%;
+}
+.table-fixed tbody {
+  height: 230px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+</style>
 
 
 <div class="inner cover">
@@ -11,58 +22,94 @@
 	</button>
 	</div>
 <div class="container-fluid">
-<table class="table table-inverse">
+<table class="table table-fixed">
+
   <tbody>
+  {% for playlist in playlists %}
     <tr>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-      <td><button type="button" class="btn btn-danger">Delete</button></td>
+      <td>{{playlist.playlist_name}}</td>
+      <td>{{playlist.playlist_seed}}</td>
+      <td>{{playlist.seed_attributes}}</td>
+      <td><button type="button" class="btn btn-success btn-sm">View on Spotify</button>  <button type="button" class="btn btn-danger btn-sm">Delete</button> </td>
     </tr>
+   {% endfor %}
   </tbody>
 </table>
 </div>
 
+<script>
+$(document).ready(function() {
+$(function() {
+    $('#createPlaylistSubmitButton').click(function() {
+        $.ajax({
+            url: '/createPlaylist',
+            data: $('#createPlaylistForm').serialize(),
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+            },
+            complete: function(){
+            	location.reload();
+            }
+        });
+        
+    });
+});
+});
+/**function closeModal() {
+	$('#addPlaylistModal').modal('hide');
+}**/
 
-      <!-- add Playlist Modal -->
-      <div class="modal fade" id = "addPlaylistModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-          <div class="modal-content" align="center" style="background-color: #565656">
-            <h3><br>Add A New Playlist<br><br></h3>
+</script>
+
+<!-- add Playlist Modal -->
+<div class="modal fade" id="addPlaylistModal" tabindex="-1" role="dialog">
+<div class="modal-dialog">
+  <div class="modal-content" align="center" style="background-color: #565656">
+    <h3><br>Add A New Playlist<br><br></h3>
 
 
-            <form name="contactForm" action="#" onsubmit="validateForm()">
+    <form id="createPlaylistForm" action="/factory" method="post" role="form">
 
-	            <div class="form-group">
-	              <div class="col-10">
-	                <input class="form-control" type="text" id="contact-email" placeholder="name@example.com" required>
-	              </div>
-	            </div>
-	            <div class="form-group">
-	              <div class="col-10">
-	                <textarea class="form-control" id="contact-comments" rows="3" placeholder="Comments" required></textarea>
-	              </div>
-	            </div>
-	            <div class="form-group">
-		            <div class="col-10">
-					  <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineFormCustomSelect" required>
-					    <option value="" disabled selected>Find songs based on</option>
-					    <option value="tracks">my most played tracks</option>
-					    <option value="artists">my most played artists</option>
-					    <option value="genres">genres</option>
-					    <option value="genres">one of my playlists</option>
-					  </select>
-					</div>  
-				</div> 
-
-	             <button type="submit" class="btn btn-success">Submit</button>
-              <br>
-              <br>
-            </form>
-
+        <div class="form-group">
+          <div class="col-10">
+            <input class="form-control" type="text" name="playlistName" placeholder="Name your playlist" required>
           </div>
         </div>
-      </div>
+        <div class="form-group">
+            <div class="col-10">
+			  <select class="form-control" name="seedType" required>
+			    <option value="" disabled selected>Find songs based on...</option>
+			    <option value="favoriteTracks">My most played tracks</option>
+			    <option value="favoriteArtists">My most played artists</option>
+			  <!-- <option value="genre">genres</option>
+			    <option value="myPlaylist">one of my playlists</option> -->
+			  </select>
+			</div>  
+		</div> 
+        <div class="form-group">
+            <div class="col-10">
+			  <select class="form-control" name="timeFrame" required>
+			    <option value="" disabled selected>Select Timeframe</option>
+			    <option value="short_term">Short Term</option>
+			    <option value="medium_term">Medium Term</option>
+			    <option value="long_term">Long Term</option>
+			  <!-- <option value="genre">genres</option>
+			    <option value="myPlaylist">one of my playlists</option> -->
+			  </select>
+			</div>  
+		</div> 		
+
+         <button id='createPlaylistSubmitButton' type="submit" class="btn btn-success">Submit</button>
+      <br>
+      <br>
+    </form>
+
+  </div>
+</div>
+</div>
+
+
 </div>
 
 {% endblock %}

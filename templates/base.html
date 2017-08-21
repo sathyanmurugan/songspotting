@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
 
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
 
@@ -53,7 +53,7 @@
         <div class="modal-dialog">
           <div class="modal-content" align="center" style="background-color: #565656">
             <h3><br>Leave us a message!<br><br></h3>
-            <form name="contactForm" action="#" onsubmit="validateForm()">
+            <form name="contactForm" action="#" onsubmit="storeComment()">
 
 	            <div class="form-group">
 	              <div class="col-10">

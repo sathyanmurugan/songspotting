@@ -3,6 +3,7 @@ import util
 import os
 import spotipy.oauth2 as oauth2
 from flask_sqlalchemy import SQLAlchemy
+import json
 
 app = flask.Flask(__name__)
 app.debug = os.environ['DEBUG']
@@ -50,16 +51,19 @@ def usercheck():
 	"""authenticated user is redirected here from spotify
 	"""
 	token_data = auth.get_token_data(flask.request.url) 
-	util.store_refresh_token(token_data,db=db,table=UserRefreshToken)
+	user_id = util.store_refresh_token(token_data,db=db,table=UserRefreshToken)
 	flask.session['token_data'] = token_data
+	flask.session['user_id'] = user_id
+
 	return flask.redirect(flask.url_for('factory'))
 
-@app.route('/factory')
+@app.route('/factory', methods=['GET','POST'])
 def factory():
 	"""User's factory page
 	"""
 	#If no session data available, send user back to main page
 	if 'token_data' not in flask.session:
+		flask.session.clear()
 		return flask.redirect(flask.url_for('main'))
 	
 	else:
@@ -70,15 +74,39 @@ def factory():
 				token_data = auth.refresh_token(flask.session['token_data'])
 				flask.session['token_data'] = token_data
 
-			return flask.render_template('factory.html')
+			playlists = UserPlaylists.query.filter_by(user_id=flask.session['user_id']).all()
+			return flask.render_template('factory.html',playlists=playlists)
 
-		except:
+		except Exception as e:
+			print(e)
 			#in case user removed permissions for the app, or if we chanegd the scopes,
 			#the old tokens are no longer valid, we need to reauthenticate
+			flask.session.clear()
 			return flask.redirect(flask.url_for('main'))	
 
-	
 
+
+@app.route('/createPlaylist', methods=['POST'])
+def createPlaylist():
+    playlistName =  flask.request.form['playlistName']
+    seedType = flask.request.form['seedType']
+    timeFrame = flask.request.form['timeFrame']
+
+    token_data = auth.refresh_token(flask.session['token_data'])
+    flask.session['token_data'] = token_data
+
+    playlist_id = util.create_playlist(token_data,
+    	db=db,table=UserPlaylists,
+    	user_id=flask.session['user_id'],
+    	playlist_name=playlistName,
+    	playlist_seed=seedType,
+    	seed_attributes=timeFrame,
+    	)
+    util.reload_playlist(token_data,
+    	table=UserPlaylists,user_id=flask.session['user_id'],
+    	playlist_id=playlist_id)
+
+    return flask.json.dumps({'status':'success'})
 
 @app.route('/test')
 def test():
