@@ -97,7 +97,19 @@ python app.py
 
 1. Every push to master will deploy that version to the Heroku server. Deploys happen automatically: be sure that this branch  is always in a deployable state and any tests have passed before you push.
 
-2. If you install a new library, remember to add it to the requirements file. For example:
+2. If you need to push Database structure from models.py to your local database, run:
+```
+python manage.py db migrate
+python manage.py db upgrade
+```
+
+To push the Databse structure changes to heroku, only run:
+```
+heroku run python manage.py db upgrade
+```
+The migrate command is only necessary locally. 
+
+3. If you install a new library, remember to add it to the requirements file. For example:
 ```
 pip install gunicorn
 pip freeze > requirements.txt
