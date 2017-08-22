@@ -88,9 +88,9 @@ def factory():
 
 @app.route('/createPlaylist', methods=['POST'])
 def createPlaylist():
-    playlistName =  flask.request.form['playlistName']
-    seedType = flask.request.form['seedType']
-    timeFrame = flask.request.form['timeFrame']
+    playlistName =  flask.request.form['playlist_name']
+    seedType = flask.request.form['seed_type']
+    timeFrame = flask.request.form['time_frame']
 
     token_data = auth.refresh_token(flask.session['token_data'])
     flask.session['token_data'] = token_data
@@ -107,6 +107,20 @@ def createPlaylist():
     	playlist_id=playlist_id)
 
     return flask.json.dumps({'status':'success'})
+
+@app.route('/deletePlaylist', methods=['POST'])
+def deletePlaylist():
+	playlist_id = flask.request.json['playlistId']
+	token_data = auth.refresh_token(flask.session['token_data'])
+	flask.session['token_data'] = token_data
+
+	util.delete_playlist(token_data,
+    	db=db,table=UserPlaylists,
+    	user_id=flask.session['user_id'],
+    	playlist_id=playlist_id
+    	)
+
+	return flask.json.dumps({'status':'success'})
 
 @app.route('/test')
 def test():

@@ -51,6 +51,7 @@ def create_playlist(token_data,db,table,**kwargs):
 	db.session.commit()
 	return playlist_id
 
+
 def reload_playlist(token_data,table,user_id,playlist_id):
 	sp = spotipy.Spotify(auth=token_data['access_token'])
 
@@ -58,7 +59,7 @@ def reload_playlist(token_data,table,user_id,playlist_id):
 	if playlist is None:
 		return
 
-	if playlist.playlist_seed == 'favoriteTracks':
+	if playlist.playlist_seed == 'favorite_tracks':
 		results = sp.current_user_top_tracks(limit=20, time_range=playlist.seed_attributes)
 		result_ids = [result['id'] for result in results['items']]
 		shuffle(result_ids)
@@ -66,7 +67,7 @@ def reload_playlist(token_data,table,user_id,playlist_id):
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]
 	
 
-	elif playlist.playlist_seed == 'favoriteArtists':
+	elif playlist.playlist_seed == 'favorite_artists':
 		results = sp.current_user_top_artists(limit=20, time_range=playlist.seed_attributes)
 		result_ids = [result['id'] for result in results['items']]
 		shuffle(result_ids)
@@ -74,6 +75,15 @@ def reload_playlist(token_data,table,user_id,playlist_id):
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
 	sp.user_playlist_replace_tracks(user_id,playlist_id,recommendation_ids)
+	return
+
+
+
+def delete_playlist(token_data,db,table,user_id,playlist_id):
+	sp = spotipy.Spotify(auth=token_data['access_token']) 
+	sp.user_playlist_unfollow(user_id,playlist_id)
+	table.query.filter_by(playlist_id=playlist_id).delete()
+	db.session.commit()
 	return
 
 

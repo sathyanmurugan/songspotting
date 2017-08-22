@@ -1,17 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
 
-<style type="text/css">
-.table-fixed thead {
-  width: 97%;
-}
-.table-fixed tbody {
-  height: 230px;
-  overflow-y: auto;
-  width: 100%;
-}
-
-</style>
 
 
 <div class="inner cover">
@@ -27,10 +16,10 @@
   <tbody>
   {% for playlist in playlists %}
     <tr>
-      <td>{{playlist.playlist_name}}</td>
-      <td>{{playlist.playlist_seed}}</td>
-      <td>{{playlist.seed_attributes}}</td>
-      <td><button type="button" class="btn btn-success btn-sm">View on Spotify</button>  <button type="button" class="btn btn-danger btn-sm">Delete</button> </td>
+      <td>{{ playlist.playlist_name }}</td>
+      <td>{{ playlist.playlist_seed.replace('_',' ').title() }}</td>
+      <td>{{ playlist.seed_attributes.replace('_',' ').title() }}</td>
+      <td><a href="https://open.spotify.com/user/{{ playlist.user_id }}/playlist/{{ playlist.playlist_id }}" target="_blank"><button type="button" class="btn btn-success btn-sm">View on Spotify</button></a> <button type="button" class="btn btn-danger btn-sm" id="deletePlaylistButton" value= "{{ playlist.playlist_id }}">Delete</button> </td>
     </tr>
    {% endfor %}
   </tbody>
@@ -42,23 +31,32 @@ $(document).ready(function() {
 $(function() {
     $('#createPlaylistSubmitButton').click(function() {
         $.ajax({
-            url: '/createPlaylist',
+            url: "{{ url_for('createPlaylist') }}",
             data: $('#createPlaylistForm').serialize(),
             type: 'POST',
             success: function(response) {
-                console.log(response);
-            },
-            complete: function(){
-            	location.reload();
+                window.location.reload(true);
             }
         });
         
     });
+    $('#deletePlaylistButton').click(function() {
+        var playlistId = $('#deletePlaylistButton').val()
+        $.ajax({
+            url: "{{ url_for('deletePlaylist') }}",
+            data: JSON.stringify({'playlistId': playlistId}),
+            type: 'POST',
+            contentType: "application/json",
+            success: function(response) {
+                window.location.reload(true);
+            },
+            dataType: "json"
+        });
+    });
+
 });
 });
-/**function closeModal() {
-	$('#addPlaylistModal').modal('hide');
-}**/
+
 
 </script>
 
@@ -68,20 +66,19 @@ $(function() {
   <div class="modal-content" align="center" style="background-color: #565656">
     <h3><br>Add A New Playlist<br><br></h3>
 
-
     <form id="createPlaylistForm" action="/factory" method="post" role="form">
 
         <div class="form-group">
           <div class="col-10">
-            <input class="form-control" type="text" name="playlistName" placeholder="Name your playlist" required>
+            <input class="form-control" type="text" name="playlist_name" placeholder="Name your playlist" required>
           </div>
         </div>
         <div class="form-group">
             <div class="col-10">
-			  <select class="form-control" name="seedType" required>
+			  <select class="form-control" name="seed_type" required>
 			    <option value="" disabled selected>Find songs based on...</option>
-			    <option value="favoriteTracks">My most played tracks</option>
-			    <option value="favoriteArtists">My most played artists</option>
+			    <option value="favorite_tracks">My most played tracks</option>
+			    <option value="favorite_artists">My most played artists</option>
 			  <!-- <option value="genre">genres</option>
 			    <option value="myPlaylist">one of my playlists</option> -->
 			  </select>
@@ -89,7 +86,7 @@ $(function() {
 		</div> 
         <div class="form-group">
             <div class="col-10">
-			  <select class="form-control" name="timeFrame" required>
+			  <select class="form-control" name="time_frame" required>
 			    <option value="" disabled selected>Select Timeframe</option>
 			    <option value="short_term">Short Term</option>
 			    <option value="medium_term">Medium Term</option>
