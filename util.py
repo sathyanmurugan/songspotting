@@ -39,8 +39,8 @@ def store_refresh_token(token_data,db,table):
 	db.session.commit()
 	return user_id
 
-def create_playlist(token_data,db,table,**kwargs):
-	sp = spotipy.Spotify(auth=token_data['access_token']) 
+def create_playlist(access_token,db,table,**kwargs):
+	sp = spotipy.Spotify(auth=access_token) 
 	response = sp.user_playlist_create(kwargs['user_id'],kwargs['playlist_name'])
 	playlist_id = response['id']
 	now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -52,8 +52,8 @@ def create_playlist(token_data,db,table,**kwargs):
 	return playlist_id
 
 
-def reload_playlist(token_data,table,user_id,playlist_id):
-	sp = spotipy.Spotify(auth=token_data['access_token'])
+def reload_playlist(access_token,table,user_id,playlist_id):
+	sp = spotipy.Spotify(auth=access_token)
 
 	playlist = table.query.filter_by(playlist_id=playlist_id).first()
 	if playlist is None:
@@ -79,8 +79,8 @@ def reload_playlist(token_data,table,user_id,playlist_id):
 
 
 
-def delete_playlist(token_data,db,table,user_id,playlist_id):
-	sp = spotipy.Spotify(auth=token_data['access_token']) 
+def delete_playlist(access_token,db,table,user_id,playlist_id):
+	sp = spotipy.Spotify(auth=access_token) 
 	sp.user_playlist_unfollow(user_id,playlist_id)
 	table.query.filter_by(playlist_id=playlist_id).delete()
 	db.session.commit()

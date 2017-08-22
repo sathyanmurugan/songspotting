@@ -95,14 +95,14 @@ def createPlaylist():
     token_data = auth.refresh_token(flask.session['token_data'])
     flask.session['token_data'] = token_data
 
-    playlist_id = util.create_playlist(token_data,
+    playlist_id = util.create_playlist(token_data['access_token'],
     	db=db,table=UserPlaylists,
     	user_id=flask.session['user_id'],
     	playlist_name=playlistName,
     	playlist_seed=seedType,
     	seed_attributes=timeFrame,
     	)
-    util.reload_playlist(token_data,
+    util.reload_playlist(token_data['access_token'],
     	table=UserPlaylists,user_id=flask.session['user_id'],
     	playlist_id=playlist_id)
 
@@ -114,7 +114,7 @@ def deletePlaylist():
 	token_data = auth.refresh_token(flask.session['token_data'])
 	flask.session['token_data'] = token_data
 
-	util.delete_playlist(token_data,
+	util.delete_playlist(token_data['access_token'],
     	db=db,table=UserPlaylists,
     	user_id=flask.session['user_id'],
     	playlist_id=playlist_id
