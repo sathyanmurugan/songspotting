@@ -35,8 +35,7 @@ $(function() {
             data: $('#createPlaylistForm').serialize(),
             type: 'POST',
             success: function(response) {
-              console.log(response);
-              setTimeout(function(){window.location.reload();},2000);
+              $(document).ajaxStop(function() { location.reload(true); });
             }
         });
         
