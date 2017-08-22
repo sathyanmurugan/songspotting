@@ -109,8 +109,8 @@ class AuthUser(object):
 		return token_data
 
 
-	def refresh_token(self,token_data):
-		token_data = self.auth.refresh_access_token(token_data['refresh_token'])
+	def refresh_token(self,refresh_token):
+		token_data = self.auth.refresh_access_token(refresh_token)
 		return token_data
 
 	

@@ -71,7 +71,7 @@ def factory():
 		try:
 			#Check if token is expired, and if so, refresh the access_token
 			if auth.is_token_expired(flask.session['token_data']):
-				token_data = auth.refresh_token(flask.session['token_data'])
+				token_data = auth.refresh_token(flask.session['token_data']['refresh_token'])
 				flask.session['token_data'] = token_data
 
 			playlists = UserPlaylists.query.filter_by(user_id=flask.session['user_id']).all()
@@ -92,7 +92,7 @@ def createPlaylist():
     seedType = flask.request.form['seed_type']
     timeFrame = flask.request.form['time_frame']
 
-    token_data = auth.refresh_token(flask.session['token_data'])
+    token_data = auth.refresh_token(flask.session['token_data']['refresh_token'])
     flask.session['token_data'] = token_data
 
     playlist_id = util.create_playlist(token_data['access_token'],
@@ -111,7 +111,7 @@ def createPlaylist():
 @app.route('/deletePlaylist', methods=['POST'])
 def deletePlaylist():
 	playlist_id = flask.request.json['playlistId']
-	token_data = auth.refresh_token(flask.session['token_data'])
+	token_data = auth.refresh_token(flask.session['token_data']['refresh_token'])
 	flask.session['token_data'] = token_data
 
 	util.delete_playlist(token_data['access_token'],
