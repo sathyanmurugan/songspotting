@@ -29,14 +29,14 @@
 <script>
 $(document).ready(function() {
 $(function() {
-    $('#createPlaylistSubmitButton').click(function() {
+    $('#createPlaylistSubmitButton').click(function(e) {
+      e.preventDefault();
         $.ajax({
             url: "{{ url_for('createPlaylist') }}",
             data: $('#createPlaylistForm').serialize(),
             type: 'POST',
             success: function(response) {
-              console.log(response)
-              $(document).ajaxStop(function() { location.reload(true); });
+              window.location.reload(true);
             }
         });
         
@@ -67,7 +67,7 @@ $(function() {
   <div class="modal-content" align="center" style="background-color: #565656">
     <h3><br>Add A New Playlist<br><br></h3>
 
-    <form id="createPlaylistForm" action="#" method="post" role="form">
+    <form id="createPlaylistForm" method="post" role="form">
 
         <div class="form-group">
           <div class="col-10">
