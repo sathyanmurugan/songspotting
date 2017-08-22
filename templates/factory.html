@@ -29,8 +29,8 @@
 <script>
 $(document).ready(function() {
 $(function() {
-    $('#createPlaylistSubmitButton').click(function(e) {
-      e.preventDefault();
+    $('#createPlaylistForm').submit(function(e) {
+
         $.ajax({
             url: "{{ url_for('createPlaylist') }}",
             data: $('#createPlaylistForm').serialize(),
