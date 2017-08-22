@@ -87,6 +87,22 @@ def delete_playlist(access_token,db,table,user_id,playlist_id):
 	return
 
 
+def get_user_playlist_ids(access_token,limit=50,offset=0):
+	sp = spotipy.Spotify(auth=access_token) 
+	playlists = sp.current_user_playlists(limit=limit,offset=offset)
+	playlist_ids = [pl['id'] for pl in playlists['items']]
+
+	#Max returned ids per call is 50.
+	#The offset serves as an index, so if the total is higher than 
+	#the limit, we can offset the index and query the remaining records
+	while len(playlist_ids) < playlists['total']:
+		offset+=limit
+		playlists = self.sp.current_user_playlists(limit=limit,offset=offset)
+		playlist_ids.extend([pl['id'] for pl in playlists['items']])
+
+	return playlist_ids
+
+
 class AuthUser(object):
 
 	def __init__(self):
