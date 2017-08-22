@@ -114,3 +114,8 @@ The migrate command is only necessary locally.
 pip install gunicorn
 pip freeze > requirements.txt
 ```
+
+4. To check the recent logs:
+```
+heroku logs --tail
+```
