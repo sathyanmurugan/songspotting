@@ -30,7 +30,8 @@
 $(document).ready(function() {
 $(function() {
     $('#createPlaylistForm').submit(function(e) {
-
+        e.preventDefault();
+        $('#addPlaylistModal').modal('hide');
         $.ajax({
             url: "{{ url_for('createPlaylist') }}",
             data: $('#createPlaylistForm').serialize(),
