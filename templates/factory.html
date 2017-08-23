@@ -19,7 +19,7 @@
     <tr>
       <th class="text-center">Playlist Name</th>
       <th class="text-center">Based On</th>
-      <th class="text-center">Attributes</th>
+      <th class="text-center">Type</th>
       <th class="text-center"></th>
     </tr>
     {% endif %}
@@ -38,57 +38,79 @@
 
 <script>
 $(document).ready(function() {
-$(function() {
-    $('#createPlaylistForm').submit(function(e) {
-        e.preventDefault();
-        $("#createNewPlaylistBtn").prop('disabled', true);
-        $('#addPlaylistModal').modal('hide');
-        $.ajax({
-            url: "{{ url_for('createPlaylist') }}",
-            data: $('#createPlaylistForm').serialize(),
-            type: 'POST',
-            success: function(response) {
-              window.location.reload(true);
-            }
-        });
-        
-    });
 
-    $('.refreshPlaylistButton').click(function() {
-        var playlistId = $(this).attr('value');
-        var input = this;
-        input.disabled = true;
-        $.ajax({
-            url: "{{ url_for('refreshPlaylist') }}",
-            data: JSON.stringify({'playlistId': playlistId}),
-            type: 'POST',
-            contentType: "application/json",
-            success: function(response) {
+/** Toggle between timeframe and genre dropdown options, depending on value selected in seed **/
+  $('#time_frame_form_group, #genre_form_group').hide()
+  $('#seed').change(function () {
+      if ($('#seed option:selected').text() == "Genre") {
+          $('#genre_form_group').show();
+          $('#time_frame_form_group').hide();
+          
+          $('#genre').attr('required', true);
+          $('#time_frame').attr('required', false);
+      } else {
+          $('#genre_form_group').hide();
+          $('#time_frame_form_group').show();
+          
+          $('#time_frame').attr('required', true);
+          $('#genre').attr('required', false);
+      }
+  });
+
+
+  $(function() {
+      $('#createPlaylistForm').submit(function(e) {
+          e.preventDefault();
+          $("#createNewPlaylistBtn").prop('disabled', true);
+          $('#addPlaylistModal').modal('hide');
+          $.ajax({
+              url: "{{ url_for('createPlaylist') }}",
+              data: $('#createPlaylistForm').serialize(),
+              type: 'POST',
+              success: function(response) {
                 window.location.reload(true);
-            },
-            dataType: "json"
-        });
-    });
+              }
+          });
+          
+      });
 
-    $('.deletePlaylistButton').click(function() {
-        var playlistId = $(this).attr('value');
-        var input = this;
-        input.disabled = true;
-        $.ajax({
-            url: "{{ url_for('deletePlaylist') }}",
-            data: JSON.stringify({'playlistId': playlistId}),
-            type: 'POST',
-            contentType: "application/json",
-            success: function(response) {
-                window.location.reload(true);
-            },
-            dataType: "json"
-        });
-    });
+      $('.refreshPlaylistButton').click(function() {
+          var playlistId = $(this).attr('value');
+          var input = this;
+          input.disabled = true;
+          $.ajax({
+              url: "{{ url_for('refreshPlaylist') }}",
+              data: JSON.stringify({'playlistId': playlistId}),
+              type: 'POST',
+              contentType: "application/json",
+              success: function(response) {
+                  window.location.reload(true);
+              },
+              dataType: "json"
+          });
+      });
 
-});
+      $('.deletePlaylistButton').click(function() {
+          var playlistId = $(this).attr('value');
+          var input = this;
+          input.disabled = true;
+          $.ajax({
+              url: "{{ url_for('deletePlaylist') }}",
+              data: JSON.stringify({'playlistId': playlistId}),
+              type: 'POST',
+              contentType: "application/json",
+              success: function(response) {
+                  window.location.reload(true);
+              },
+              dataType: "json"
+          });
+      });
+
+  });
 });
 </script>
+
+
 
 <!-- add Playlist Modal -->
 <div class="modal fade" id="addPlaylistModal" tabindex="-1" role="dialog">
@@ -105,27 +127,35 @@ $(function() {
         </div>
         <div class="form-group">
             <div class="col-10">
-			  <select class="form-control" name="seed_type" required>
+			  <select class="form-control" id="seed" name="seed_type" required>
 			    <option value="" disabled selected>Find songs based on...</option>
 			    <option value="favorite_tracks">My most played tracks</option>
 			    <option value="favorite_artists">My most played artists</option>
-			  <!-- <option value="genre">genres</option>
-			    <option value="myPlaylist">one of my playlists</option> -->
+           <option value="genre">Genre</option>
 			  </select>
 			</div>  
 		</div> 
-        <div class="form-group">
+        <div class="form-group" id="time_frame_form_group">
             <div class="col-10">
-			  <select class="form-control" name="time_frame" required>
+			  <select class="form-control attribute" id="time_frame" name="attribute">
 			    <option value="" disabled selected>Select Timeframe</option>
 			    <option value="short_term">Short Term</option>
 			    <option value="medium_term">Medium Term</option>
 			    <option value="long_term">Long Term</option>
-			  <!-- <option value="genre">genres</option>
-			    <option value="myPlaylist">one of my playlists</option> -->
 			  </select>
 			</div>  
 		</div> 		
+
+        <div class="form-group" id="genre_form_group">
+        <div class="col-10">
+        <select class="form-control attribute" id="genre" name="attribute">
+          <option value="" disabled selected>Select Genre</option>
+          {% for genre in genres %}
+          <option value="{{ genre }}">{{ genre }}</option>
+          {% endfor %}
+        </select>
+        </div>
+    </div>  
 
          <button id='createPlaylistSubmitButton' type="submit" class="btn btn-success">Submit</button>
       <br>

@@ -53,7 +53,7 @@ def create_playlist(access_token,db,table,**kwargs):
 	return playlist_id
 
 
-def reload_playlist(access_token,table,user_id,playlist_id,genres=None):
+def reload_playlist(access_token,table,user_id,playlist_id):
 	sp = spotipy.Spotify(auth=access_token)
 
 	playlist = table.query.filter_by(playlist_id=playlist_id).first()
@@ -77,8 +77,8 @@ def reload_playlist(access_token,table,user_id,playlist_id,genres=None):
 		recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
-	elif playlist.playlist_seed == 'genres':
-		recommendations = sp.recommendations(seed_genres=genres[0:5],limit=20)
+	elif playlist.playlist_seed == 'genre':
+		recommendations = sp.recommendations(seed_genres=[playlist.seed_attributes],limit=20)
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]		
 
 	if recommendation_ids:
@@ -147,6 +147,11 @@ def store_comment(db,table,email,comment):
 	db.session.commit()
 	return
 
+
+def get_genres(access_token):
+	sp = spotipy.Spotify(auth=access_token)
+	genres = sp.recommendation_genre_seeds()['genres']
+	return genres
 
 class AuthUser(object):
 

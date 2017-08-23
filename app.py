@@ -81,7 +81,8 @@ def factory():
 				flask.session['token_data'] = token_data
 
 			playlists = UserPlaylists.query.filter_by(user_id=flask.session['user_id']).all()
-			return flask.render_template('factory.html',playlists=playlists)
+			genres = util.get_genres(flask.session['token_data']['access_token'])
+			return flask.render_template('factory.html',playlists=playlists, genres=genres)
 
 		except Exception as e:
 			print(e)
@@ -96,7 +97,7 @@ def factory():
 def createPlaylist():
     playlistName =  flask.request.form['playlist_name']
     seedType = flask.request.form['seed_type']
-    timeFrame = flask.request.form['time_frame']
+    attribute = flask.request.form['attribute']
 
     token_data = auth.refresh_token(flask.session['token_data']['refresh_token'])
     flask.session['token_data'] = token_data
@@ -106,7 +107,7 @@ def createPlaylist():
     	user_id=flask.session['user_id'],
     	playlist_name=playlistName,
     	playlist_seed=seedType,
-    	seed_attributes=timeFrame,
+    	seed_attributes=attribute,
     	)
     util.reload_playlist(token_data['access_token'],
     	table=UserPlaylists,user_id=flask.session['user_id'],
