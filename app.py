@@ -80,7 +80,7 @@ def factory():
 				token_data = auth.refresh_token(flask.session['token_data']['refresh_token'])
 				flask.session['token_data'] = token_data
 
-			playlists = UserPlaylists.query.filter_by(user_id=flask.session['user_id']).all()
+			playlists = UserPlaylists.query.filter_by(user_id=flask.session['user_id']).order_by(UserPlaylists.id).all()
 			genres = util.get_genres(flask.session['token_data']['access_token'])
 			return flask.render_template('factory.html',playlists=playlists, genres=genres)
 
