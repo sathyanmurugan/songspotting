@@ -15,12 +15,14 @@
 <table class="table table-fixed">
 
   <tbody>
+    {% if playlists|length > 0 %}
     <tr>
       <th class="text-center">Playlist Name</th>
       <th class="text-center">Based On</th>
       <th class="text-center">Attributes</th>
       <th class="text-center"></th>
     </tr>
+    {% endif %}
   {% for playlist in playlists %}
     <tr>
       <td>{{ playlist.playlist_name }}</td>
