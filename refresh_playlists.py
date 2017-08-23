@@ -56,11 +56,11 @@ for r in results:
 			recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
 			recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
-	elif playlist.playlist_seed == 'genre':
+	elif r['playlist_seed'] == 'genre':
 		recommendations = sp.recommendations(seed_genres=[r['seed_attributes']],limit=20)
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
-	elif playlist.playlist_seed == 'playlist':
+	elif r['playlist_seed'] == 'playlist':
 		tracks = util.get_tracks_in_playlist(token_data['access_token'],r['user_id'],r['seed_attributes'])
 		shuffle(tracks)
 		if len(tracks) > 0:
