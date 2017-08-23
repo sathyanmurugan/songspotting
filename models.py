@@ -62,3 +62,20 @@ class UserPlaylists(db.Model):
 
 	def __repr__(self):
 		return '<playlist_id %r>' % self.playlist_id
+
+
+class ContactForm(db.Model):
+	__tablename__ = 'contact_form'
+	
+	id = db.Column(db.Integer, primary_key=True)
+	email = db.Column(db.String(), unique=False)
+	comment = db.Column(db.String(), unique=False)
+	created_date = db.Column(db.DateTime, unique=False) 
+
+	def __init__(self, email, comment, created_date):
+		self.email = email
+		self.comment = comment
+		self.created_date = created_date
+		
+	def __repr__(self):
+		return '<Comment %r>' % self.comment		

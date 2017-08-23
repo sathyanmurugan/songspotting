@@ -140,6 +140,13 @@ def store_user_data(user_data,db,table):
 	return
 
 
+def store_comment(db,table,email,comment):
+	now = datetime.datetime.now()
+	row = table(email,comment,now)
+	db.session.add(row)
+	db.session.commit()
+	return
+
 
 class AuthUser(object):
 

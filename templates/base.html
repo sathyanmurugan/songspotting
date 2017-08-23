@@ -28,79 +28,99 @@
 </head>
 
 
-  <body background="{{ url_for('static',filename='images/bg_img.jpg') }}">
-    <div class="site-wrapper">
-      <div class="site-wrapper-inner">
-        <div class="cover-container">
+<body background="{{ url_for('static',filename='images/bg_img.jpg') }}">
 
-          <div class="masthead clearfix" style="color:white" align="left">
-            <div class="inner">
-              <h1 class="masthead-brand">SongSpotting</h1>
-              <nav>
-                <ul class="nav masthead-nav">
-                 <!-- <li class="active"><a href="#">Home</a></li> -->
-                 <li><a href="#" data-toggle="modal" data-target="#howItWorksModal">How It Works</a></li>
-                 <li><a href="#" data-toggle="modal" data-target="#contactformModal">Contact Us</a></li>
-                </ul>
-              </nav>
-            </div>
-          </div>
+<script>
+$(document).ready(function() {
+$(function() {
+    $('#contactForm').submit(function(e) {
+        e.preventDefault();
+        $('#contactformModal').modal('hide');
+        $.ajax({
+            url: "{{ url_for('addContactForm') }}",
+            data: $('#contactForm').serialize(),
+            type: 'POST',
+            success: function(response) {
+              window.location.reload(true);
+            }
+        });
+        
+    });
+});
+});
+</script>
 
-      <!-- How It Works Modal -->
-      <div class="modal fade" id = "howItWorksModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-          <div class="modal-content" align="center" style="background-color: #565656; color:white">
-        	<div class="modal-body">
-		        By using Spotify's amazing API, we can generate playlists for you based on your listening habits (favorite artists or songs) or your preferred genres<br><br>All you have to do is login with your Spotify account and tell us what kind of playlists we should make for you.<br><br>We will add then to you Spotify account and update them every day!
-      		</div>
+  <div class="site-wrapper">
+    <div class="site-wrapper-inner">
+      <div class="cover-container">
 
-          </div>
-        </div>
-      </div>
-
-
-
-      <!-- Contactform Modal -->
-      <div class="modal fade" id = "contactformModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-          <div class="modal-content" align="center" style="background-color: #565656; color:white">
-            <h3><br>Leave us a message!<br><br></h3>
-            <form name="contactForm" action="#" onsubmit="storeComment()">
-
-	            <div class="form-group">
-	              <div class="col-10">
-	                <input class="form-control" type="text" id="contact-email" placeholder="name@example.com" required>
-	              </div>
-	            </div>
-	            <div class="form-group">
-	              <div class="col-10">
-	                <textarea class="form-control" id="contact-comments" rows="3" placeholder="Comments" required></textarea>
-	              </div>
-	            </div>
-
-	             <button type="submit" class="btn btn-success">Submit</button>
-              <br>
-              <br>
-            </form>
-
+        <div class="masthead clearfix" style="color:white" align="left">
+          <div class="inner">
+            <h1 class="masthead-brand">SongSpotting</h1>
+            <nav>
+              <ul class="nav masthead-nav">
+               <!-- <li class="active"><a href="#">Home</a></li> -->
+               <li><a href="#" data-toggle="modal" data-target="#howItWorksModal">How It Works</a></li>
+               <li><a href="#" data-toggle="modal" data-target="#contactformModal">Contact Us</a></li>
+              </ul>
+            </nav>
           </div>
         </div>
+
+    <!-- How It Works Modal -->
+    <div class="modal fade" id = "howItWorksModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content" align="center" style="background-color: #565656; color:white">
+      	<div class="modal-body">
+	        We use Spotify's music recommendation engine to generate playlists for you based on your listening habits (favorite artists or songs) or your preferred genres.<br><br>All you have to do is login with your Spotify account and tell us what kind of playlists we should make for you.<br><br>We will add then to you Spotify account and update them every day!
+    		</div>
+
+        </div>
       </div>
-
-    <!-- Footer -->
-	<div class="mastfoot">
-	  <div class="inner">
-	    <p>Powered by <a href="https://developer.spotify.com/" target="blank">Spotify</a></p>
-	  </div>
-	</div>
-
-
-	{% block body %}
-	{% endblock %}
-
-	 </div>
     </div>
-   </div>
+
+
+    <!-- Contactform Modal -->
+    <div class="modal fade" id = "contactformModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content" align="center" style="background-color: #565656; color:white">
+          <h3><br>Leave us a message!<br><br></h3>
+         
+          <form id="contactForm" method="post" role="form">
+            <div class="form-group">
+              <div class="col-10">
+                <input class="form-control" type="text" name="email" placeholder="name@example.com" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-10">
+                <textarea class="form-control" name="comment" rows="3" placeholder="Comments" required></textarea>
+              </div>
+            </div>
+
+             <button type="submit" class="btn btn-success">Submit</button>
+            <br>
+            <br>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  <!-- Footer -->
+<div class="mastfoot">
+  <div class="inner">
+    <p>Made with <span style="color:red;">&hearts;</span> by <a href="https://github.com/sathyanmurugan" target="_blank">Sathyan</a> and <a href="https://github.com/theindependentwolf" target="_blank">Aniruth</a></p>
+  </div>
+</div>
+
+
+{% block body %}
+{% endblock %}
+
+ </div>
+  </div>
+ </div>
 
 </body>
 </html>

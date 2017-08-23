@@ -114,6 +114,7 @@ def createPlaylist():
 
     return flask.json.dumps({'status':'success'})
 
+
 @app.route('/deletePlaylist', methods=['POST'])
 def deletePlaylist():
 	playlist_id = flask.request.json['playlistId']
@@ -128,8 +129,18 @@ def deletePlaylist():
 
 	return flask.json.dumps({'status':'success'})
 
-@app.route('/test')
-def test():
-	return flask.render_template('main.html')
+
+@app.route('/addContactForm', methods=['POST'])
+def addContactForm():
+    email =  flask.request.form['email']
+    comment = flask.request.form['comment']
+    util.store_comment(
+    	db=db,table=ContactForm,
+    	email=email,
+    	comment=comment)
+
+    return flask.json.dumps({'status':'success'})
+
+
 if __name__ == '__main__':
     app.run()

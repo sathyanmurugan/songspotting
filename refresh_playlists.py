@@ -38,6 +38,7 @@ for r in results:
 		conn.commit()
 		continue
 
+	recommendation_ids = None
 
 	if r['playlist_seed'] == 'favorite_tracks':
 		results = sp.current_user_top_tracks(limit=20, time_range=r['seed_attributes'])
@@ -53,7 +54,12 @@ for r in results:
 		recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
-	sp.user_playlist_replace_tracks(r['user_id'],r['playlist_id'],recommendation_ids)
+	elif playlist.playlist_seed == 'genres':
+		recommendations = sp.recommendations(seed_genres=genres[0:5],limit=20)
+		recommendation_ids = [track['id'] for track in recommendations['tracks']]		
+
+	if recommendation_ids:
+		sp.user_playlist_replace_tracks(r['user_id'],r['playlist_id'],recommendation_ids)
 
 
 cursor.close()
