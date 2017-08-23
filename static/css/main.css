@@ -149,3 +149,15 @@ body {
     width: 90%;
   }
 }
+
+
+#createNewPlaylistBtn {
+    margin: 10px;
+    margin-bottom: 30px;
+}
+
+
+#playlistTableDiv {
+    height: 40vh;
+    overflow-y:auto;
+}

@@ -6,11 +6,12 @@
 <div class="inner cover">
   <h1 class="cover-heading">My Playlists<br></h1>
   <div class="container-fluid">
-	<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addPlaylistModal">
+	<button id="createNewPlaylistBtn" type="button" class="btn btn-success" data-toggle="modal" data-target="#addPlaylistModal">
 	  Create New Playlist
 	</button>
 	</div>
 <div class="container-fluid">
+<div id="playlistTableDiv">
 <table class="table table-fixed">
 
   <tbody>
@@ -24,6 +25,7 @@
    {% endfor %}
   </tbody>
 </table>
+</div>
 </div>
 
 <script>
