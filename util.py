@@ -26,24 +26,25 @@ def store_refresh_token(token_data,db,table):
 	#Check if user exists in dB
 	user_id = get_user_id(token_data)
 	user = table.query.filter_by(user_id=user_id).first()
+	now = datetime.datetime.now()
 
 	if user is None:
-		#Add user and refresh_token
-		now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+		#Add refresh_token
 		row = table(user_id,token_data['refresh_token'],now)
 		db.session.add(row)
 	else:
 		#update refresh_token
 		user.refresh_token = token_data['refresh_token']
-
+		user.stored_date = now
 	db.session.commit()
-	return user_id
+	return
+
 
 def create_playlist(access_token,db,table,**kwargs):
 	sp = spotipy.Spotify(auth=access_token) 
 	response = sp.user_playlist_create(kwargs['user_id'],kwargs['playlist_name'])
 	playlist_id = response['id']
-	now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	now = datetime.datetime.now()
 
 	#Add playlist details to database
 	row = table(kwargs['user_id'],playlist_id,kwargs['playlist_name'],kwargs['playlist_seed'],kwargs['seed_attributes'],now)
@@ -52,13 +53,15 @@ def create_playlist(access_token,db,table,**kwargs):
 	return playlist_id
 
 
-def reload_playlist(access_token,table,user_id,playlist_id):
+def reload_playlist(access_token,table,user_id,playlist_id,genres=None):
 	sp = spotipy.Spotify(auth=access_token)
 
 	playlist = table.query.filter_by(playlist_id=playlist_id).first()
 	if playlist is None:
 		return
 
+	recommendation_ids = None
+	
 	if playlist.playlist_seed == 'favorite_tracks':
 		results = sp.current_user_top_tracks(limit=20, time_range=playlist.seed_attributes)
 		result_ids = [result['id'] for result in results['items']]
@@ -74,7 +77,12 @@ def reload_playlist(access_token,table,user_id,playlist_id):
 		recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
-	sp.user_playlist_replace_tracks(user_id,playlist_id,recommendation_ids)
+	elif playlist.playlist_seed == 'genres':
+		recommendations = sp.recommendations(seed_genres=genres[0:5],limit=20)
+		recommendation_ids = [track['id'] for track in recommendations['tracks']]		
+
+	if recommendation_ids:
+		sp.user_playlist_replace_tracks(user_id,playlist_id,recommendation_ids)
 	return
 
 
@@ -101,6 +109,36 @@ def get_user_playlist_ids(access_token,limit=50,offset=0):
 		playlist_ids.extend([pl['id'] for pl in playlists['items']])
 
 	return playlist_ids
+
+
+def get_user_data(access_token):
+	sp = spotipy.Spotify(auth=access_token)
+	response = sp.current_user()
+	user_data = {k:v for k,v in response.items() if k in ['id','display_name','email','followers']}
+	user_data['followers'] = user_data['followers']['total']
+	user_data['user_id'] = user_data.pop('id')
+	return user_data
+
+def store_user_data(user_data,db,table):
+	
+	#Check if user exists in dB
+	user = table.query.filter_by(user_id=user_data['user_id']).first()
+	now = datetime.datetime.now()
+
+	if user is None:
+		row = table(user_data['user_id'],user_data['display_name'],
+			user_data['email'],user_data['followers'],now,now)
+		db.session.add(row)
+	else:
+		#update user
+		user.display_name = user_data['display_name']
+		user.email = user_data['email']
+		user.followers = user_data['followers']
+		user.updated_at = now
+
+	db.session.commit()
+	return
+
 
 
 class AuthUser(object):

@@ -50,10 +50,16 @@ def login():
 def usercheck():
 	"""authenticated user is redirected here from spotify
 	"""
+
+	#Store token data and add to session
 	token_data = auth.get_token_data(flask.request.url) 
-	user_id = util.store_refresh_token(token_data,db=db,table=UserRefreshToken)
+	util.store_refresh_token(token_data,db=db,table=UserRefreshToken)
 	flask.session['token_data'] = token_data
-	flask.session['user_id'] = user_id
+
+	#Get and store user info
+	user_data = util.get_user_data(token_data['access_token'])
+	flask.session['user_id'] = user_data['user_id']
+	util.store_user_data(user_data,db,Users)
 
 	return flask.redirect(flask.url_for('factory'))
 
