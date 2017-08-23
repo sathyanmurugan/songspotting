@@ -157,7 +157,7 @@ def addContactForm():
 
 @app.route('/mobile')
 def mobile():
-	return "Sorry, we are not yet ready for mobile. please try us using a computer"
+	return "Sorry, we are not yet ready for mobile. please try us on a computer"
 
 
 if __name__ == '__main__':
