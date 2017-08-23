@@ -28,7 +28,7 @@
       <td>{{ playlist.playlist_name }}</td>
       <td>{{ playlist.playlist_seed.replace('_',' ').title() }}</td>
       <td>{{ playlist.seed_attributes.replace('_',' ').title() }}</td>
-      <td><a href="https://open.spotify.com/user/{{ playlist.user_id }}/playlist/{{ playlist.playlist_id }}" target="_blank"><button type="button" class="btn btn-success btn-sm">View on Spotify</button></a> <button type="button" class="btn btn-danger btn-sm deletePlaylistButton" value= "{{ playlist.playlist_id }}">Delete</button> </td>
+      <td><a href="https://open.spotify.com/user/{{ playlist.user_id }}/playlist/{{ playlist.playlist_id }}" target="blank"><button type="button" class="btn btn-success btn-sm">View on Spotify</button></a> <button type="button" class="btn btn-info btn-sm refreshPlaylistButton" value= "{{ playlist.playlist_id }}">Refresh Playlist</button> <button type="button" class="btn btn-danger btn-sm deletePlaylistButton" value= "{{ playlist.playlist_id }}">Delete</button> </td>
     </tr>
    {% endfor %}
   </tbody>
@@ -41,6 +41,7 @@ $(document).ready(function() {
 $(function() {
     $('#createPlaylistForm').submit(function(e) {
         e.preventDefault();
+        $("#createNewPlaylistBtn").prop('disabled', true);
         $('#addPlaylistModal').modal('hide');
         $.ajax({
             url: "{{ url_for('createPlaylist') }}",
@@ -52,8 +53,27 @@ $(function() {
         });
         
     });
+
+    $('.refreshPlaylistButton').click(function() {
+        var playlistId = $(this).attr('value');
+        var input = this;
+        input.disabled = true;
+        $.ajax({
+            url: "{{ url_for('refreshPlaylist') }}",
+            data: JSON.stringify({'playlistId': playlistId}),
+            type: 'POST',
+            contentType: "application/json",
+            success: function(response) {
+                window.location.reload(true);
+            },
+            dataType: "json"
+        });
+    });
+
     $('.deletePlaylistButton').click(function() {
         var playlistId = $(this).attr('value');
+        var input = this;
+        input.disabled = true;
         $.ajax({
             url: "{{ url_for('deletePlaylist') }}",
             data: JSON.stringify({'playlistId': playlistId}),

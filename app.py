@@ -115,6 +115,20 @@ def createPlaylist():
     return flask.json.dumps({'status':'success'})
 
 
+@app.route('/refreshPlaylist', methods=['POST'])
+def refreshPlaylist():
+	playlist_id = flask.request.json['playlistId']
+	token_data = auth.refresh_token(flask.session['token_data']['refresh_token'])
+	flask.session['token_data'] = token_data
+
+	util.reload_playlist(token_data['access_token'],
+		table=UserPlaylists,
+    	user_id=flask.session['user_id'],
+    	playlist_id=playlist_id
+    	)
+
+	return flask.json.dumps({'status':'success'})
+
 @app.route('/deletePlaylist', methods=['POST'])
 def deletePlaylist():
 	playlist_id = flask.request.json['playlistId']
