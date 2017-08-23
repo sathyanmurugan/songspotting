@@ -44,19 +44,28 @@ for r in results:
 		results = sp.current_user_top_tracks(limit=20, time_range=r['seed_attributes'])
 		result_ids = [result['id'] for result in results['items']]
 		shuffle(result_ids)
-		recommendations = sp.recommendations(seed_tracks=result_ids[0:5],limit=20)
-		recommendation_ids = [track['id'] for track in recommendations['tracks']]
+		if len(result_ids) > 0:
+			recommendations = sp.recommendations(seed_tracks=result_ids[0:5],limit=20)
+			recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
 	elif r['playlist_seed'] == 'favorite_artists':
 		results = sp.current_user_top_artists(limit=20, time_range=r['seed_attributes'])
 		result_ids = [result['id'] for result in results['items']]
 		shuffle(result_ids)
-		recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
+		if len(result_ids) > 0:
+			recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
+			recommendation_ids = [track['id'] for track in recommendations['tracks']]
+
+	elif playlist.playlist_seed == 'genre':
+		recommendations = sp.recommendations(seed_genres=[r['seed_attributes']],limit=20)
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
-	elif playlist.playlist_seed == 'genres':
-		recommendations = sp.recommendations(seed_genres=genres[0:5],limit=20)
-		recommendation_ids = [track['id'] for track in recommendations['tracks']]		
+	elif playlist.playlist_seed == 'playlist':
+		tracks = util.get_tracks_in_playlist(token_data['access_token'],r['user_id'],r['seed_attributes'])
+		shuffle(tracks)
+		if len(tracks) > 0:
+			recommendations = sp.recommendations(seed_tracks=tracks[0:5],limit=20)
+			recommendation_ids = [track['id'] for track in recommendations['tracks']]				
 
 	if recommendation_ids:
 		sp.user_playlist_replace_tracks(r['user_id'],r['playlist_id'],recommendation_ids)

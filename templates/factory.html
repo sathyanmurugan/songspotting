@@ -15,19 +15,23 @@
 <table class="table table-fixed">
 
   <tbody>
-    {% if playlists|length > 0 %}
+    {% if songspotting_playlists|length > 0 %}
     <tr>
       <th class="text-center">Playlist Name</th>
       <th class="text-center">Based On</th>
-      <th class="text-center">Type</th>
+      <th class="text-center">Attribute</th>
       <th class="text-center"></th>
     </tr>
     {% endif %}
-  {% for playlist in playlists %}
+  {% for playlist in songspotting_playlists %}
     <tr>
       <td>{{ playlist.playlist_name }}</td>
       <td>{{ playlist.playlist_seed.replace('_',' ').title() }}</td>
+      {% if playlist.playlist_seed != 'playlist' %}
       <td>{{ playlist.seed_attributes.replace('_',' ').title() }}</td>
+      {% else %}
+      <td><a href="https://open.spotify.com/user/{{ playlist.user_id }}/playlist/{{ playlist.seed_attributes }}" target="blank">Source Playlist</a></td>
+      {% endif %}
       <td><a href="https://open.spotify.com/user/{{ playlist.user_id }}/playlist/{{ playlist.playlist_id }}" target="blank"><button type="button" class="btn btn-success btn-sm">View on Spotify</button></a> <button type="button" class="btn btn-info btn-sm refreshPlaylistButton" value= "{{ playlist.playlist_id }}">Refresh Playlist</button> <button type="button" class="btn btn-danger btn-sm deletePlaylistButton" value= "{{ playlist.playlist_id }}">Delete</button> </td>
     </tr>
    {% endfor %}
@@ -40,20 +44,32 @@
 $(document).ready(function() {
 
 /** Toggle between timeframe and genre dropdown options, depending on value selected in seed **/
-  $('#time_frame_form_group, #genre_form_group').hide()
+  $('#time_frame_form_group, #genre_form_group, #spotify_playlists_form_group').hide()
   $('#seed').change(function () {
-      if ($('#seed option:selected').text() == "Genre") {
+      if ($('#seed option:selected').val() == "genre") {
           $('#genre_form_group').show();
           $('#time_frame_form_group').hide();
-          
+          $('#spotify_playlists_form_group').hide();
+
           $('#genre').attr('required', true);
           $('#time_frame').attr('required', false);
+          $('#playlist').attr('required', false);
+      } else if ($('#seed option:selected').val() == "playlist") {
+          $('#genre_form_group').hide();
+          $('#time_frame_form_group').hide();
+          $('#spotify_playlists_form_group').show();
+          
+          $('#genre').attr('required', false);
+          $('#time_frame').attr('required', false);
+          $('#playlist').attr('required', true);
       } else {
           $('#genre_form_group').hide();
           $('#time_frame_form_group').show();
+          $('#spotify_playlists_form_group').hide();
           
-          $('#time_frame').attr('required', true);
           $('#genre').attr('required', false);
+          $('#time_frame').attr('required', true);
+          $('#playlist').attr('required', false);
       }
   });
 
@@ -62,6 +78,7 @@ $(document).ready(function() {
       $('#createPlaylistForm').submit(function(e) {
           e.preventDefault();
           $("#createNewPlaylistBtn").prop('disabled', true);
+          $("#createNewPlaylistBtn").html('Creating...');
           $('#addPlaylistModal').modal('hide');
           $.ajax({
               url: "{{ url_for('createPlaylist') }}",
@@ -76,8 +93,8 @@ $(document).ready(function() {
 
       $('.refreshPlaylistButton').click(function() {
           var playlistId = $(this).attr('value');
-          var input = this;
-          input.disabled = true;
+          this.disabled = true;
+          $(this).html('Refreshing');
           $.ajax({
               url: "{{ url_for('refreshPlaylist') }}",
               data: JSON.stringify({'playlistId': playlistId}),
@@ -92,8 +109,8 @@ $(document).ready(function() {
 
       $('.deletePlaylistButton').click(function() {
           var playlistId = $(this).attr('value');
-          var input = this;
-          input.disabled = true;
+          this.disabled = true;
+          $(this).html('Deleting');
           $.ajax({
               url: "{{ url_for('deletePlaylist') }}",
               data: JSON.stringify({'playlistId': playlistId}),
@@ -125,17 +142,18 @@ $(document).ready(function() {
             <input class="form-control" type="text" name="playlist_name" placeholder="Name your playlist" maxlength="30" required>
           </div>
         </div>
-        <div class="form-group">
+      <div class="form-group">
             <div class="col-10">
 			  <select class="form-control" id="seed" name="seed_type" required>
-			    <option value="" disabled selected>Find songs based on...</option>
-			    <option value="favorite_tracks">My most played tracks</option>
-			    <option value="favorite_artists">My most played artists</option>
-           <option value="genre">Genre</option>
+			    <option value="" disabled selected>Find Songs Based On...</option>
+			    <option value="favorite_tracks">My Most Played Tracks</option>
+			    <option value="favorite_artists">My Most Played Artists</option>
+          <option value="genre">A Genre</option>
+          <option value="playlist">One Of My Playlists</option>
 			  </select>
-			</div>  
-		</div> 
-        <div class="form-group" id="time_frame_form_group">
+			     </div>  
+		  </div> 
+     <div class="form-group" id="time_frame_form_group">
             <div class="col-10">
 			  <select class="form-control attribute" id="time_frame" name="attribute">
 			    <option value="" disabled selected>Select Timeframe</option>
@@ -143,10 +161,10 @@ $(document).ready(function() {
 			    <option value="medium_term">Medium Term</option>
 			    <option value="long_term">Long Term</option>
 			  </select>
-			</div>  
-		</div> 		
+		    	</div>  
+	   	</div> 		
 
-        <div class="form-group" id="genre_form_group">
+      <div class="form-group" id="genre_form_group">
         <div class="col-10">
         <select class="form-control attribute" id="genre" name="attribute">
           <option value="" disabled selected>Select Genre</option>
@@ -155,7 +173,18 @@ $(document).ready(function() {
           {% endfor %}
         </select>
         </div>
-    </div>  
+      </div>  
+
+      <div class="form-group" id="spotify_playlists_form_group">
+        <div class="col-10">
+        <select class="form-control attribute" id="playlist" name="attribute">
+          <option value="" disabled selected>Select One Of Your Playlists</option>
+          {% for p_id,p_name in spotify_playlists %}
+          <option value="{{ p_id }}">{{ p_name }}</option>
+          {% endfor %}
+        </select>
+        </div>
+      </div>  
 
          <button id='createPlaylistSubmitButton' type="submit" class="btn btn-success">Submit</button>
       <br>

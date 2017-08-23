@@ -66,20 +66,28 @@ def reload_playlist(access_token,table,user_id,playlist_id):
 		results = sp.current_user_top_tracks(limit=20, time_range=playlist.seed_attributes)
 		result_ids = [result['id'] for result in results['items']]
 		shuffle(result_ids)
-		recommendations = sp.recommendations(seed_tracks=result_ids[0:5],limit=20)
-		recommendation_ids = [track['id'] for track in recommendations['tracks']]
-	
+		if len(result_ids) > 0:
+			recommendations = sp.recommendations(seed_tracks=result_ids[0:5],limit=20)
+			recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
 	elif playlist.playlist_seed == 'favorite_artists':
 		results = sp.current_user_top_artists(limit=20, time_range=playlist.seed_attributes)
 		result_ids = [result['id'] for result in results['items']]
 		shuffle(result_ids)
-		recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
-		recommendation_ids = [track['id'] for track in recommendations['tracks']]
+		if len(result_ids) > 0:
+			recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
+			recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
 	elif playlist.playlist_seed == 'genre':
 		recommendations = sp.recommendations(seed_genres=[playlist.seed_attributes],limit=20)
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]		
+
+	elif playlist.playlist_seed == 'playlist':
+		tracks = get_tracks_in_playlist(access_token,user_id,playlist.seed_attributes)
+		shuffle(tracks)
+		if len(tracks) > 0:
+			recommendations = sp.recommendations(seed_tracks=tracks[0:5],limit=20)
+			recommendation_ids = [track['id'] for track in recommendations['tracks']]			
 
 	if recommendation_ids:
 		sp.user_playlist_replace_tracks(user_id,playlist_id,recommendation_ids)
@@ -111,6 +119,35 @@ def get_user_playlist_ids(access_token,limit=50,offset=0):
 	return playlist_ids
 
 
+def get_user_playlists(access_token,limit=50,offset=0):
+	sp = spotipy.Spotify(auth=access_token) 
+	playlists = sp.current_user_playlists(limit=limit,offset=offset)
+	user_playlists = [(pl['id'],pl['name']) for pl in playlists['items']]
+
+	#Max returned ids per call is 50.
+	#The offset serves as an index, so if the total is higher than 
+	#the limit, we can offset the index and query the remaining records
+	while len(user_playlists) < playlists['total']:
+		offset+=limit
+		playlists = self.sp.current_user_playlists(limit=limit,offset=offset)
+		user_playlists.extend([(pl['id'],pl['name']) for pl in playlists['items']])
+
+	return user_playlists
+
+def get_tracks_in_playlist(access_token,user_id,playlist_id,limit=50,offset=0):
+	sp = spotipy.Spotify(auth=access_token) 
+	result = sp.user_playlist_tracks(user_id,playlist_id,limit=limit,offset=offset)
+	tracks = [t['track']['id'] for t in result['items']]
+	print(result)
+	#Max returned ids per call is 50.
+	#The offset serves as an index, so if the total is higher than 
+	#the limit, we can offset the index and query the remaining records
+	while len(tracks) < result['total']:
+		offset+=limit
+		result = sp.user_playlist_tracks(user_id,playlist_id,limit=limit,offset=offset)
+		tracks.extend([t['track']['id'] for t in result['items']])	
+	return tracks
+
 def get_user_data(access_token):
 	sp = spotipy.Spotify(auth=access_token)
 	response = sp.current_user()
@@ -118,6 +155,7 @@ def get_user_data(access_token):
 	user_data['followers'] = user_data['followers']['total']
 	user_data['user_id'] = user_data.pop('id')
 	return user_data
+
 
 def store_user_data(user_data,db,table):
 	

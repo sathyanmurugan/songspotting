@@ -80,9 +80,13 @@ def factory():
 				token_data = auth.refresh_token(flask.session['token_data']['refresh_token'])
 				flask.session['token_data'] = token_data
 
-			playlists = UserPlaylists.query.filter_by(user_id=flask.session['user_id']).order_by(UserPlaylists.id).all()
+			songspotting_playlists = UserPlaylists.query.filter_by(user_id=flask.session['user_id']).order_by(UserPlaylists.id).all()
+			spotify_playlists = util.get_user_playlists(flask.session['token_data']['access_token'])
 			genres = util.get_genres(flask.session['token_data']['access_token'])
-			return flask.render_template('factory.html',playlists=playlists, genres=genres)
+			return flask.render_template(
+				'factory.html',
+				songspotting_playlists=songspotting_playlists, 
+				genres=genres,spotify_playlists=spotify_playlists)
 
 		except Exception as e:
 			print(e)
