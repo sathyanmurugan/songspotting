@@ -9,3 +9,5 @@ ENV/
 *.pyc
 
 .env~
+
+test.py
