@@ -1,6 +1,6 @@
 # SongSpotting
 
-Mad shouts to Cam Linke and the folks at Real Python for this awesome blog post: https://realpython.com/blog/python/flask-by-example-part-1-project-setup
+Mad shouts to Cam Linke and the people at Real Python for this awesome blog post: https://realpython.com/blog/python/flask-by-example-part-1-project-setup, and also to the folks over at spotipy for the awesome package.
 
 ### Setup
 1. Download this repository
