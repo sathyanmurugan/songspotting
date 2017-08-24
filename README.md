@@ -2,6 +2,8 @@
 
 Mad shouts to Cam Linke and the people at Real Python for this awesome blog post: https://realpython.com/blog/python/flask-by-example-part-1-project-setup, and also to the folks over at spotipy for the awesome package.
 
+This app was deployed with Heroku.
+
 ### Setup
 1. Download this repository
 
