@@ -113,7 +113,7 @@ def get_user_playlist_ids(access_token,limit=50,offset=0):
 	#the limit, we can offset the index and query the remaining records
 	while len(playlist_ids) < playlists['total']:
 		offset+=limit
-		playlists = self.sp.current_user_playlists(limit=limit,offset=offset)
+		playlists = sp.current_user_playlists(limit=limit,offset=offset)
 		playlist_ids.extend([pl['id'] for pl in playlists['items']])
 
 	return playlist_ids
@@ -129,7 +129,7 @@ def get_user_playlists(access_token,limit=50,offset=0):
 	#the limit, we can offset the index and query the remaining records
 	while len(user_playlists) < playlists['total']:
 		offset+=limit
-		playlists = self.sp.current_user_playlists(limit=limit,offset=offset)
+		playlists = sp.current_user_playlists(limit=limit,offset=offset)
 		user_playlists.extend([(pl['id'],pl['name']) for pl in playlists['items']])
 
 	return user_playlists
