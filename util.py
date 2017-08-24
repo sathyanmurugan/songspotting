@@ -67,7 +67,7 @@ def reload_playlist(access_token,table,user_id,playlist_id):
 		result_ids = [result['id'] for result in results['items']]
 		shuffle(result_ids)
 		if len(result_ids) > 0:
-			recommendations = sp.recommendations(seed_tracks=result_ids[0:5],limit=20)
+			recommendations = sp.recommendations(seed_tracks=result_ids[0:5],limit=50)
 			recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
 	elif playlist.playlist_seed == 'favorite_artists':
@@ -75,18 +75,18 @@ def reload_playlist(access_token,table,user_id,playlist_id):
 		result_ids = [result['id'] for result in results['items']]
 		shuffle(result_ids)
 		if len(result_ids) > 0:
-			recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=20)
+			recommendations = sp.recommendations(seed_artists=result_ids[0:5],limit=50)
 			recommendation_ids = [track['id'] for track in recommendations['tracks']]
 
 	elif playlist.playlist_seed == 'genre':
-		recommendations = sp.recommendations(seed_genres=[playlist.seed_attributes],limit=20)
+		recommendations = sp.recommendations(seed_genres=[playlist.seed_attributes],limit=50)
 		recommendation_ids = [track['id'] for track in recommendations['tracks']]		
 
 	elif playlist.playlist_seed == 'playlist':
 		tracks = get_tracks_in_playlist(access_token,user_id,playlist.seed_attributes)
 		shuffle(tracks)
 		if len(tracks) > 0:
-			recommendations = sp.recommendations(seed_tracks=tracks[0:5],limit=20)
+			recommendations = sp.recommendations(seed_tracks=tracks[0:5],limit=50)
 			recommendation_ids = [track['id'] for track in recommendations['tracks']]			
 
 	if recommendation_ids:
