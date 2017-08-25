@@ -90,7 +90,7 @@ def reload_playlist(access_token,table,user_id,playlist_id):
 			recommendation_ids = [track['id'] for track in recommendations['tracks']]			
 
 	if recommendation_ids:
-		sp.user_playlist_replace_tracks(user_id,playlist_id,recommendation_ids)
+		response = p.user_playlist_replace_tracks(user_id,playlist_id,recommendation_ids)
 	return
 
 
