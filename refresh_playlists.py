@@ -71,7 +71,11 @@ for r in results:
 		if recommendation_ids:
 			response = sp.user_playlist_replace_tracks(r['user_id'],r['playlist_id'],recommendation_ids)
 			now = datetime.datetime.now()
-			
+			sql = "UPDATE user_playlists SET updated_date = %s WHERE playlist_id = %s"
+			cursor.execute(sql,(now,r['playlist_id'],))
+			conn.commit()
+
+
 
 	except Exception as e:
 		print(str(e))
