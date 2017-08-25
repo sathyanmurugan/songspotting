@@ -47,7 +47,7 @@ def create_playlist(access_token,db,table,**kwargs):
 	now = datetime.datetime.now()
 
 	#Add playlist details to database
-	row = table(kwargs['user_id'],playlist_id,kwargs['playlist_name'],kwargs['playlist_seed'],kwargs['seed_attributes'],now)
+	row = table(kwargs['user_id'],playlist_id,kwargs['playlist_name'],kwargs['playlist_seed'],kwargs['seed_attributes'],now,now)
 	db.session.add(row)
 	db.session.commit()
 	return playlist_id
@@ -90,7 +90,7 @@ def reload_playlist(access_token,table,user_id,playlist_id):
 			recommendation_ids = [track['id'] for track in recommendations['tracks']]			
 
 	if recommendation_ids:
-		response = p.user_playlist_replace_tracks(user_id,playlist_id,recommendation_ids)
+		response = sp.user_playlist_replace_tracks(user_id,playlist_id,recommendation_ids)
 	return
 
 
