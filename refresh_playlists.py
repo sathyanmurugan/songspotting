@@ -2,7 +2,7 @@ import spotipy
 import util
 import psycopg2
 import psycopg2.extras
-import os
+import os, datetime
 from random import shuffle 
 
 #Get list of playlists to be updated from the DB
@@ -70,6 +70,8 @@ for r in results:
 
 		if recommendation_ids:
 			response = sp.user_playlist_replace_tracks(r['user_id'],r['playlist_id'],recommendation_ids)
+			now = datetime.datetime.now()
+			
 
 	except Exception as e:
 		print(str(e))

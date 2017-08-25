@@ -51,14 +51,16 @@ class UserPlaylists(db.Model):
 	playlist_seed = db.Column(db.String(), unique=False)
 	seed_attributes = db.Column(db.String(), unique=False) 
 	created_date = db.Column(db.DateTime, unique=False) 
+	updated_date = db.Column(db.DateTime, unique=False) 
 
-	def __init__(self,user_id,playlist_id,playlist_name,playlist_seed,seed_attributes,created_date):
+	def __init__(self,user_id,playlist_id,playlist_name,playlist_seed,seed_attributes,created_date,updated_date):
 		self.user_id = user_id
 		self.playlist_id = playlist_id
 		self.playlist_name = playlist_name
 		self.playlist_seed = playlist_seed
 		self.seed_attributes = seed_attributes
 		self.created_date = created_date
+		self.updated_date = updated_date
 
 	def __repr__(self):
 		return '<playlist_id %r>' % self.playlist_id
